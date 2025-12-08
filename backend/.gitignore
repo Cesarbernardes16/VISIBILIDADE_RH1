@@ -1,0 +1,23 @@
+# --- Dependências do Node (Pesado, nunca enviar) ---
+node_modules/
+*/node_modules/
+
+# --- Arquivos de Ambiente e Senhas (SEGURANÇA MÁXIMA) ---
+.env
+backend/.env
+frontend/env.js
+env.js
+config.js
+
+# --- Arquivos de Sistema Operacional (Lixo) ---
+.DS_Store
+Thumbs.db
+
+# --- Logs de erro ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Pastas de build (se usar React no futuro) ---
+dist/
+build/

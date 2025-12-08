@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão RH - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body class="dashboard-body">
+
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <header class="mobile-header">
+        <button id="btn-menu-burger" class="menu-btn">
+            <span class="material-icons-outlined">menu</span>
+        </button>
+        <h3>Visão RH</h3>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="material-icons-outlined user-icon">account_circle</span>
+            <div class="user-info">
+                <h3>Sistema de Gestão</h3>
+                <p>Dashboard Principal</p>
+            </div>
+            <button id="btn-close-sidebar" class="close-btn-mobile" style="display:none;">
+                <span class="material-icons-outlined">close</span>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" id="nav-visao-geral" class="nav-link active">
+                <span class="material-icons-outlined">bar_chart</span>
+                Visão Geral
+            </a>
+            <a href="#" id="nav-painel-gestao" class="nav-link">
+                <span class="material-icons-outlined">settings</span>
+                Painel de Gestão
+            </a>
+            <a href="#" id="nav-graficos" class="nav-link">
+                <span class="material-icons-outlined">show_chart</span>
+                Gráficos
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="#" id="nav-sair" class="nav-link">
+                <span class="material-icons-outlined">logout</span>
+                Sair
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div id="visao-geral-content" class="content-section active">
+            <header><h1>Colaboradores</h1></header>
+            
+            <div class="filter-container">
+                <input type="text" id="search-bar" placeholder="Pesquisar por Nome...">
+                <select id="filter-status">
+                    <option value="">Todo Status</option>
+                    <option value="ATIVO">Ativo</option>
+                    <option value="AFASTADO">Afastado</option>
+                    <option value="DESLIGADOS">Desligado</option>
+                </select>
+                <select id="filter-area"><option value="">Carregando...</option></select>
+                <select id="filter-lider"><option value="">Carregando...</option></select>
+                <select id="filter-classificacao"><option value="">Carregando...</option></select>
+            </div>
+            
+            <div id="dashboard-container">
+                <div id="loading-indicator">Carregando colaboradores...</div>
+            </div>
+            
+            <div id="pagination-container">
+                <button id="load-more-button" style="display: none;">Carregar Mais</button>
+            </div>
+        </div>
+
+        <div id="gestao-content" class="content-section" style="display: none;">
+            <header><h1>Painel de Gestão - Metas</h1></header>
+            
+            <div class="form-container">
+                <h2>Cadastrar/Atualizar Metas da Área</h2>
+                <form id="meta-form" class="meta-form">
+                    <div class="input-group">
+                        <label for="meta-area">Área:</label>
+                        <select id="meta-area" required><option value="">Selecione...</option></select>
+                    </div>
+                    <div class="input-group">
+                        <label for="meta-valor">Meta QLP:</label>
+                        <input type="number" id="meta-valor" placeholder="Ex: 85" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="meta-pcd-valor">Meta PCD:</label>
+                        <input type="number" id="meta-pcd-valor" placeholder="Ex: 5" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="meta-jovem-valor">Meta Jovem:</label>
+                        <input type="number" id="meta-jovem-valor" placeholder="Ex: 2" min="0">
+                    </div>
+                    <button type="submit" id="meta-submit-button">Salvar Metas</button>
+                    <p id="meta-success-message" class="success-message">Salvo com sucesso!</p>
+                </form>
+            </div>
+
+            <div class="table-container-scroll">
+                <div class="report-container">
+                    <h2>Relatório: Metas por Área (QLP Total)</h2>
+                    <table class="report-table">
+                        <thead><tr><th>QLP POR ÁREA</th><th>META</th><th>REAL</th></tr></thead>
+                        <tbody id="report-table-body-qlp"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="table-container-scroll">
+                <div class="report-container">
+                    <div class="report-header">
+                        <h2>Relatório: Metas por PCD</h2>
+                        <div class="quota-info"><span>Meta Legal:</span><strong id="quota-pcd-value">--</strong></div>
+                    </div>
+                    <table class="report-table">
+                        <thead><tr><th>ÁREA</th><th>META</th><th>REAL</th></tr></thead>
+                        <tbody id="report-table-body-pcd"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="table-container-scroll">
+                <div class="report-container">
+                    <div class="report-header">
+                        <h2>Relatório: Metas por Jovem Aprendiz</h2>
+                        <div class="quota-info"><span>Meta Legal:</span><strong id="quota-jovem-value">--</strong></div>
+                    </div>
+                    <table class="report-table">
+                        <thead><tr><th>ÁREA</th><th>META</th><th>REAL</th></tr></thead>
+                        <tbody id="report-table-body-jovem"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="graficos-content" class="content-section" style="display: none;">
+            <header><h1>Gráficos - Metas</h1></header>
+            <div class="chart-container">
+                <h2>Meta QLP vs Real vs Gap</h2>
+                <canvas id="grafico-metas-qlp"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Meta PCD vs Real vs Gap</h2>
+                <canvas id="grafico-metas-pcd"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Meta Jovem Aprendiz vs Real vs Gap</h2>
+                <canvas id="grafico-metas-jovem"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal-detalhes" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="fecharModal()">&times;</span>
+            <div id="modal-header" class="modal-header-custom"></div>
+            <div class="modal-body-scroll">
+                <div class="modal-grid" id="modal-dados-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
