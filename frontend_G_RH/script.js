@@ -15,7 +15,7 @@ let listaColaboradoresGlobal = [];
 const usuarioPerfil = sessionStorage.getItem('usuarioPerfil'); // 'admin' ou 'user'
 const usuarioCPF = sessionStorage.getItem('usuarioCPF');
 
-// ======== FUNÇÕES DE FORMATAÇÃO (ORIGINAIS) ========
+// ======== FUNÇÕES DE FORMATAÇÃO (ATUALIZADAS) ========
 function formatarSalario(valor) {
     if (!valor) return '';
     const numeroLimpo = String(valor).replace("R$", "").replace(/\./g, "").replace(",", ".");
@@ -32,8 +32,23 @@ function formatarCPF(cpf) {
     return `${c.slice(0, 3)}.${c.slice(3, 6)}.${c.slice(6, 9)}-${c.slice(9, 11)}`;
 }
 
+// --- FUNÇÃO ATUALIZADA PARA CORRIGIR A DATA ---
 function formatarDataExcel(valor) {
     if (!valor) return '';
+
+    // 1. Verifica se é formato ISO String (ex: 2025-02-05 ou 2025-02-05T00:00:00)
+    // O regex procura por 4 digitos - 2 digitos - 2 digitos no inicio
+    if (typeof valor === 'string' && valor.match(/^\d{4}-\d{2}-\d{2}/)) {
+        try {
+            const parteData = valor.split('T')[0]; // Garante pegar só a data caso venha com hora
+            const [ano, mes, dia] = parteData.split('-');
+            return `${dia}/${mes}/${ano}`;
+        } catch (e) {
+            return valor;
+        }
+    }
+
+    // 2. Lógica antiga para Serial Number do Excel (ex: 45690)
     const serial = Number(valor);
     if (isNaN(serial) || serial < 20000) return String(valor);
     try {
@@ -198,7 +213,13 @@ async function carregarFiltrosAPI() {
     if (usuarioPerfil === 'user') return;
     try {
         const res = await fetch(`${API_URL}/filtros`);
-        const { areas, lideres, classificacoes } = await res.json();
+        let { areas, lideres, classificacoes } = await res.json();
+        
+        // Normalizar dados dos filtros
+        areas = areas.map(i => normalizarTexto(i));
+        lideres = lideres.map(i => normalizarTexto(i));
+        classificacoes = classificacoes.map(i => normalizarTexto(i));
+        
         const popular = (el, arr) => {
             if(!el) return;
             el.innerHTML = '<option value="">Todos</option>' + arr.map(i => `<option value="${i}">${i}</option>`).join('');
@@ -257,8 +278,10 @@ async function fetchColaboradores() {
         }
 
         data.forEach(colaborador => {
-            const index = listaColaboradoresGlobal.push(colaborador) - 1;
-            dashboardContainer.innerHTML += criarCardColaborador(colaborador, index);
+            // Normalizar os dados antes de exibir
+            const colaboradorNormalizado = normalizarObjeto(colaborador);
+            const index = listaColaboradoresGlobal.push(colaboradorNormalizado) - 1;
+            dashboardContainer.innerHTML += criarCardColaborador(colaboradorNormalizado, index);
         });
 
         if(loadMoreButton) {
@@ -305,6 +328,8 @@ function criarCardColaborador(colab, index) {
     const turno = v(colab.TURNO);
     const lider = v(colab.LIDER);
     const ultimaFuncao = v(colab.CARGO_ANTIGO);
+    
+    // AQUI É APLICADA A FORMATAÇÃO CORRIGIDA
     const dataPromocao = formatarDataExcel(colab['DATA_DA_PROMOCAO']);
     const classificacao = colab.CLASSIFICACAO || 'SEM';
 
@@ -519,8 +544,11 @@ async function carregarDadosDashboard(renderizarGraficos = false) {
             throw new Error(`Erro na API: ${res.status}`);
         }
 
-        const data = await res.json();
+        let data = await res.json();
         
+        // Normalizar dados recebidos da API
+        data = normalizarObjeto(data);
+
         if(!data || !data.stats || !data.areas) {
             console.warn("Dados do dashboard incompletos ou vazios.");
             return;
