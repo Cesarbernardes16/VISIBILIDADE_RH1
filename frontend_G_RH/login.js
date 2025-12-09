@@ -5,7 +5,7 @@ const loginButton = document.getElementById('login-button');
 const errorMessage = document.getElementById('error-message');
 
 // URL do Backend
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://backend-g-rh.onrender.com';
 
 if (sessionStorage.getItem('usuarioLogado') === 'true') {
     window.location.href = 'index.html';
