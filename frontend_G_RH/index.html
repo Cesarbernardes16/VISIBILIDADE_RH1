@@ -45,6 +45,10 @@
                 <span class="material-icons-outlined">show_chart</span>
                 Gráficos
             </a>
+            <a href="#" id="nav-ferias" class="nav-link">
+                <span class="material-icons-outlined">beach_access</span>
+                Gestão de Férias
+            </a>
         </nav>
         <div class="sidebar-footer">
             <a href="#" id="nav-sair" class="nav-link">
@@ -157,6 +161,74 @@
                 <canvas id="grafico-metas-jovem"></canvas>
             </div>
         </div>
+
+        <div id="ferias-content" class="content-section" style="display: none;">
+            <header><h1>Central de Férias</h1></header>
+
+            <div class="form-container">
+                <h2>🏖️ Solicitar Minhas Férias</h2>
+                <form id="form-solicitar-ferias" class="meta-form">
+                    <div class="input-group">
+                        <label>Data Início:</label>
+                        <input type="date" id="ferias-inicio" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Data Fim:</label>
+                        <input type="date" id="ferias-fim" required>
+                    </div>
+                    <button type="submit" style="background-color: #4a69e2;">Enviar Solicitação</button>
+                </form>
+            </div>
+
+            <div id="area-aprovacao-lider" class="report-container" style="display:none; border-left: 5px solid #ffc107;">
+                <div class="report-header">
+                    <h2>👑 Painel do Líder: Aprovações Pendentes</h2>
+                    <button onclick="carregarDadosFerias()" style="padding:5px 10px; cursor:pointer;">Atualizar</button>
+                </div>
+                <p style="font-size:0.9em; color:#666; margin-bottom:10px;">
+                    Atenção: Ao aprovar, o sistema bloqueia automaticamente estas datas para outros membros da equipe.
+                </p>
+                <div class="table-container-scroll">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Colaborador</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                                <th>Dias</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-aprovacao-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="report-container">
+                <div class="report-header">
+                    <h2>📅 Histórico e Status</h2>
+                    <button id="btn-exportar-ferias" onclick="exportarRelatorioFerias()" style="background-color: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; display: none;">
+                        <span class="material-icons-outlined" style="vertical-align: middle; font-size: 16px;">file_download</span> Exportar Excel
+                    </button>
+                </div>
+                <div class="table-container-scroll">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Início</th>
+                                <th>Fim</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-ferias-body">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <div id="modal-detalhes" class="modal-overlay" style="display: none;">

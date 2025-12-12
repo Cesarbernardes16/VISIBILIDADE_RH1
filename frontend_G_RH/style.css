@@ -202,7 +202,7 @@ body {
 }
 .card-body p strong {
     color: #000; margin-right: 10px;
-    flex-basis: 240px;
+    flex-basis: 220px;
     flex-shrink: 0; text-align: left;
 }
 .card-body p span {
@@ -460,4 +460,46 @@ body {
     .pdi-item:last-child {
         border-bottom: none;
     }
+}
+/* ======== ESTILOS ESPECÍFICOS DO MODAL DE LOGIN ======== */
+
+/* Ajuste para o modal de login ser menor que o do dashboard */
+.login-modal {
+    max-width: 450px !important; /* Mais estreito que o modal de detalhes */
+    width: 90%;
+    margin: auto;
+    border-radius: 12px;
+    overflow: hidden;
+    animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Centralizar cabeçalho do modal de login */
+.login-modal .modal-header-custom {
+    padding: 20px;
+    background-color: #4a69e2; /* Mesma cor do botão de login */
+    text-align: center;
+}
+
+.login-modal h3 {
+    margin: 0;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+/* Ajustes dos inputs dentro do modal */
+.login-modal .input-group input {
+    background-color: #f9f9f9;
+}
+
+.login-modal button {
+    margin-top: 10px;
+    background-color: #28a745; /* Verde para indicar sucesso/salvar */
+}
+.login-modal button:hover {
+    background-color: #218838;
 }
