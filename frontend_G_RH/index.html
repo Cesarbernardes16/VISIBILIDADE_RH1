@@ -70,9 +70,21 @@
                     <option value="AFASTADO">Afastado</option>
                     <option value="DESLIGADOS">Desligado</option>
                 </select>
+                
+                <select id="filter-pcd">
+                    <option value="">Todos (PCD)</option>
+                    <option value="SIM">Sim</option>
+                    <option value="NÃO">Não</option>
+                </select>
+
                 <select id="filter-area"><option value="">Carregando...</option></select>
                 <select id="filter-lider"><option value="">Carregando...</option></select>
                 <select id="filter-classificacao"><option value="">Carregando...</option></select>
+
+                <button id="btn-exportar-geral" style="background-color: #28a745; color: white; border: none; padding: 0 15px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px; height: 42px;">
+                    <span class="material-icons-outlined" style="font-size: 18px;">file_download</span> 
+                    Exportar
+                </button>
             </div>
             
             <div id="dashboard-container">
