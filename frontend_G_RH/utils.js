@@ -373,6 +373,44 @@ function normalizarDadosAPI(dados) {
     return normalizarObjeto(dados);
 }
 
+// ===============================================
+// 🔐 FUNÇÕES DE SEGURANÇA E AUTENTICAÇÃO (NOVO)
+// ===============================================
+
+/**
+ * Retorna os cabeçalhos padrão para requisições autenticadas
+ * Inclui automaticamente o Token JWT se existir
+ */
+function getAuthHeaders() {
+    const token = sessionStorage.getItem('accessToken');
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return headers;
+}
+
+/**
+ * Verifica se a resposta da API indicou erro de autenticação (401/403)
+ * Se sim, desloga o usuário e redireciona.
+ * @param {Response} response - Objeto Response do fetch
+ * @returns {boolean} True se houve erro de auth, False se não
+ */
+function handleAuthError(response) {
+    if (response.status === 401 || response.status === 403) {
+        console.warn('Sessão expirada ou inválida. Redirecionando...');
+        alert('Sua sessão expirou. Por favor, faça login novamente.');
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+        return true;
+    }
+    return false;
+}
+
 /**
  * Exporta as funções para uso em outros módulos
  */
@@ -380,111 +418,8 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         normalizarTexto,
         normalizarObjeto,
-        normalizarDadosAPI
+        normalizarDadosAPI,
+        getAuthHeaders,
+        handleAuthError
     };
-}
-/**
- * Utils.js - Utilitários e Segurança
- */
-// frontend_G_RH/utils.js
-
-// ==========================================
-// 🔐 SISTEMA DE SEGURANÇA (Storage Criptografado)
-// ==========================================
-const Sessao = {
-    _key: "GRH_SECURE_TOKEN_V1", // Chave de assinatura
-
-    salvar: function(usuario) {
-        try {
-            // 1. Cria o pacote de dados
-            const pacote = JSON.stringify({
-                dados: usuario,
-                assinatura: this._key,
-                timestamp: new Date().getTime()
-            });
-
-            // 2. Criptografa para Base64 (Ofuscação)
-            const token = btoa(encodeURIComponent(pacote));
-
-            // 3. Salva no SessionStorage (Funciona sempre)
-            sessionStorage.setItem('session_token', token);
-        } catch (e) {
-            console.error("Erro ao salvar sessão:", e);
-        }
-    },
-
-    ler: function() {
-        try {
-            // 1. Busca o token
-            const token = sessionStorage.getItem('session_token');
-            if (!token) return null;
-
-            // 2. Descriptografa
-            const jsonStr = decodeURIComponent(atob(token));
-            const pacote = JSON.parse(jsonStr);
-
-            // 3. Valida se o token é nosso mesmo
-            if (pacote.assinatura !== this._key) return null;
-
-            return pacote.dados;
-        } catch (e) {
-            console.warn("Sessão inválida ou corrompida.");
-            return null; // Se der erro, força logout
-        }
-    },
-
-    limpar: function() {
-        sessionStorage.removeItem('session_token');
-        sessionStorage.clear();
-        window.location.href = 'login.html';
-    }
-};
-
-// ==========================================
-// 🛠️ NORMALIZAÇÃO DE TEXTO
-// ==========================================
-function normalizarTexto(texto) {
-    if (typeof texto !== 'string' || !texto) return texto;
-    texto = texto.replace(/\uFFFD/g, '');
-    
-    const correcoes = {
-        'NAO': 'NÃO', 'OTIMO': 'ÓTIMO', 'ACAO': 'AÇÃO', 'SITUACAO': 'SITUAÇÃO',
-        'FUNCAO': 'FUNÇÃO', 'LIDERANCA': 'LIDERANÇA', 'AREA': 'ÁREA',
-        'ANALISE': 'ANÁLISE', 'COMUNICACAO': 'COMUNICAÇÃO'
-    };
-
-    for (const [erro, correto] of Object.entries(correcoes)) {
-        const regex = new RegExp(`\\b${erro}\\b`, 'g');
-        texto = texto.replace(regex, correto);
-    }
-    
-    // Correções de padrões quebrados
-    const padroes = [
-        { r: /SEGURAN\.A/g, v: 'SEGURANÇA' }, { r: /CONFIAN\.A/g, v: 'CONFIANÇA' },
-        { r: /AN\.LISE/g, v: 'ANÁLISE' }, { r: /ANAL\.TICA/g, v: 'ANALÍTICA' },
-        { r: /DECIS\.ES/g, v: 'DECISÕES' }, { r: /REUNI\.ES/g, v: 'REUNIÕES' },
-        { r: /OPERA\.\.ES/g, v: 'OPERAÇÕES' }, { r: /COMUNICA\.\.O/g, v: 'COMUNICAÇÃO' }
-    ];
-
-    padroes.forEach(p => texto = texto.replace(p.r, p.v));
-
-    return texto;
-}
-
-function normalizarObjeto(obj) {
-    if (Array.isArray(obj)) return obj.map(item => normalizarObjeto(item));
-    if (obj !== null && typeof obj === 'object') {
-        const novoObj = {};
-        for (const [chave, valor] of Object.entries(obj)) {
-            novoObj[chave] = (typeof valor === 'string') ? normalizarTexto(valor) : normalizarObjeto(valor);
-        }
-        return novoObj;
-    }
-    return (typeof obj === 'string') ? normalizarTexto(obj) : obj;
-}
-
-function normalizarDadosAPI(dados) { return normalizarObjeto(dados); }
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { Sessao, normalizarTexto, normalizarObjeto };
 }
