@@ -1,7 +1,7 @@
 // frontend_G_RH/script.js
 
 // URL da API Backend
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://backend-g-rh.onrender.com';
 
 // Variáveis Globais de UI
 let dashboardContainer, loadingIndicator, searchBar, filterStatus, filterArea, filterLider, filterClassificacao, loadMoreButton;
